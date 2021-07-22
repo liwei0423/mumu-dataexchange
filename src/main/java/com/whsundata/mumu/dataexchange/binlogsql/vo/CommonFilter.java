@@ -38,7 +38,7 @@ public class CommonFilter implements Filter {
 
     @Override
     public boolean filter(Event event) {
-        log.info(startTime + "  " + event.getHeader().getTimestamp());
+//        log.info(startTime + "  " + event.getHeader().getTimestamp());
         return startTime <= event.getHeader().getTimestamp();
     }
 

@@ -40,8 +40,26 @@
         </repository>
     </distributionManagement>
 
-    <dependencies>
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <disruptor.version>3.4.2</disruptor.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
+        <gson.version>2.8.5</gson.version>
+        <httpclient.version>4.5.6</httpclient.version>
 
+        <druid.version>1.0.9</druid.version>
+        <mysql.connector.version>5.1.46</mysql.connector.version>
+        <!-- jquery使用json时，后台依赖的jar包 -->
+        <ezmorph.version>1.0.6</ezmorph.version>
+        <jsonlib.version>2.4</jsonlib.version>
+        <mybaitsplus.version>2.1.9</mybaitsplus.version>
+        <commons-pool2.version>2.4.2</commons-pool2.version>
+        <ehcache-core.version>2.6.9</ehcache-core.version>
+        <xsequence.version>1.5</xsequence.version>
+    </properties>
+
+    <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -55,12 +73,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-        </dependency>
-        <!-- Provided -->
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -106,34 +118,12 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>${commons-fileupload.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>jsonlib</groupId>
             <artifactId>jsonlib</artifactId>
             <version>${jsonlib.version}</version>
             <classifier>jdk15</classifier>
-        </dependency>
-
-        <!-- rocketmq -->
-        <dependency>
-            <groupId>com.alibaba.rocketmq</groupId>
-            <artifactId>rocketmq-client</artifactId>
-            <version>${rocketmq.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>fastjson</artifactId>
-                    <groupId>com.alibaba</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -161,12 +151,6 @@
             <groupId>com.xuanner</groupId>
             <artifactId>xsequence-core</artifactId>
             <version>${xsequence.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
         </dependency>
 
         <dependency>
@@ -201,39 +185,6 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.sundata.mumu.exam.ExamApplication</start-class>
-        <disruptor.version>3.4.2</disruptor.version>
-        <commons-lang3.version>3.8.1</commons-lang3.version>
-        <commons-fileupload.version>1.3.1</commons-fileupload.version>
-
-        <gson.version>2.8.5</gson.version>
-        <httpclient.version>4.5.6</httpclient.version>
-
-        <druid.version>1.0.9</druid.version>
-        <mysql.connector.version>5.1.46</mysql.connector.version>
-        <zkclient.version>0.8</zkclient.version>
-        <dubbo.version>2.8.4</dubbo.version>
-
-        <ehcache-core.version>2.6.9</ehcache-core.version>
-        <!-- jquery使用json时，后台依赖的jar包 -->
-        <ezmorph.version>1.0.6</ezmorph.version>
-        <jsonlib.version>2.4</jsonlib.version>
-
-        <rocketmq.version>3.2.6</rocketmq.version>
-        <sdcloud-point.version>1.3</sdcloud-point.version>
-        <xsequence.version>1.5</xsequence.version>
-        <mybaitsplus.version>2.1.9</mybaitsplus.version>
-        <commons-pool2.version>2.4.2</commons-pool2.version>
-
-        <aliyun.oss.sdk.version>2.8.3</aliyun.oss.sdk.version>
-        <exam-api.version>0.0.8</exam-api.version>
-        <!-- 出题组卷 -->
-        <question.version>0.0.41</question.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -242,7 +193,7 @@
                 <version>1.4.2.RELEASE</version>
                 <configuration>
                     <mainClass>
-                        com.whsundata.mumu.exam.ExamApplication
+                        com.whsundata.mumu.dataexchange.DataApplication
                     </mainClass>
                 </configuration>
                 <executions>
@@ -261,10 +212,6 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
-                    <!--					<compilerArguments>-->
-                    <!--						<verbose/>-->
-                    <!--						<bootclasspath>${JAVA_HOME}/jre/lib/rt.jar;${JAVA_HOME}/jre/lib/jce.jar</bootclasspath>-->
-                    <!--					</compilerArguments>-->
                 </configuration>
             </plugin>
         </plugins>
@@ -275,16 +222,6 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <targetPath>${project.build.directory}/classes</targetPath>
-            </resource>
-            <!-- 打包时将jsp文件拷贝到META-INF目录下 -->
-            <resource>
-                <!-- 指定resources插件处理哪个目录下的资源文件 -->
-                <directory>src/main/webapp</directory>
-                <!--注意此次必须要放在此目录下才能被访问到 -->
-                <targetPath>META-INF/resources</targetPath>
-                <includes>
-                    <include>**/*.*</include>
-                </includes>
             </resource>
         </resources>
 
