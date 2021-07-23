@@ -11,8 +11,7 @@ import java.util.List;
 
 @Slf4j
 public class Bootstrap {
-    public static void main(String[] args) throws Exception {
-        log.info("#############");
+    public static void start(){
         DbInfoVo dbInfoVo = new DbInfoVo();
         dbInfoVo.setHost("10.0.40.231");
         dbInfoVo.setPort(3306);
@@ -25,7 +24,11 @@ public class Bootstrap {
         filterDbTableVos.add(filterDbTableVo);
         new BinlogListenSql(dbInfoVo)
                 .setFilter(new CommonFilter().setStartTime(System.currentTimeMillis())
-                .setIncludeDbTableVos(filterDbTableVos))
+                        .setIncludeDbTableVos(filterDbTableVos))
                 .connectAndListen();
+    }
+
+    public static void main(String[] args) throws Exception {
+       start();
     }
 }

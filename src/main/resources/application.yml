@@ -1,3 +1,13 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+  kafka:
+    bootstrap-servers: 10.0.40.217:9092
+    consumer:
+      group-id: test-consumer
+    producer:
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 0
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer

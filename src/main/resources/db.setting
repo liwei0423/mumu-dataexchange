@@ -1,0 +1,12 @@
+## db.setting文件
+url = jdbc:mysql://10.0.40.231:3306/test1?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+user = root
+pass = 123456
+driver = com.mysql.jdbc.Driver
+## 可选配置
+# 是否在日志中显示执行的SQL
+showSql = true
+# 是否格式化显示的SQL
+formatSql = false
+# 是否显示SQL参数
+showParams = true
