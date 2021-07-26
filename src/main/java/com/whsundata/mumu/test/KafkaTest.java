@@ -1,11 +1,45 @@
 package com.whsundata.mumu.test;
 
+import com.whsundata.mumu.dataexchange.DataApplication;
+import com.whsundata.mumu.dataexchange.kafka.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.KafkaMessageListenerContainer;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Properties;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = DataApplication.class)//这里的Application是springboot的启动类名
 public class KafkaTest {
+
+    @Autowired
+    KafkaTemplate kafkaTemplate;
+
+    @Autowired
+    ConsumerFactory consumerFactory;
+
+    @Test
+    public void send(){
+        String topic = "dev-test-user";
+        kafkaTemplate.send(topic,"testtemplate");
+    }
+
+//    @Test
+//    public void listen(){
+//        String topic = "dev-test-user";
+//        ContainerProperties properties = new ContainerProperties(topic);
+//        properties.setMessageListener(new KafkaConsumer());
+//        new KafkaMessageListenerContainer<>(consumerFactory, properties);
+//    }
+
     public static void send(String topic, String key, String value) {
         Properties props = new Properties();
         props.put("bootstrap.servers", "10.0.40.217:9092");

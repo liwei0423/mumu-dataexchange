@@ -4,7 +4,9 @@ spring:
   kafka:
     bootstrap-servers: 10.0.40.217:9092
     consumer:
+      enable-auto-commit: false
       group-id: test-consumer
+      max-poll-records: 100
     producer:
       batch-size: 16384
       buffer-memory: 33554432

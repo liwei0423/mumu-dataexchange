@@ -1,8 +1,10 @@
 package com.whsundata.mumu.dataexchange.kafka;
 
 import com.whsundata.mumu.dataexchange.util.HttpClientUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -18,7 +20,7 @@ public class KafkaConsumer {
         try {
             Map<String, Object> params = new HashMap<>();
             params.put("sql", value);
-            HttpClientUtil.httpPostRequest("http://localhost:8080/demo/receive/", params);
+            String result = HttpClientUtil.httpPostRequest("http://localhost:8080/demo/receive/", params);
         } catch (Exception e) {
             e.printStackTrace();
         }
