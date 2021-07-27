@@ -9,6 +9,7 @@ public class TableVo {
     private String dbName;
     private String tableName;
     private List<ColumnVo> columns;
+    private List<ColumnVo> primaryColumns;
 
     public TableVo(String dbName, String tableName) {
         this.dbName = dbName;

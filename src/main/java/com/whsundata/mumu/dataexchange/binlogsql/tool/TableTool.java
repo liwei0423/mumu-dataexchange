@@ -6,7 +6,10 @@ import com.whsundata.mumu.dataexchange.binlogsql.vo.ColumnVo;
 import com.whsundata.mumu.dataexchange.binlogsql.vo.DbInfoVo;
 import com.whsundata.mumu.dataexchange.binlogsql.vo.TableVo;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.JDBCType;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +37,17 @@ public class TableTool {
         }
         String url = "jdbc:mysql://" + dbInfoVo.getHost() + ":" + dbInfoVo.getPort() + "/" + dbName + "?characterEncoding=UTF-8&autoReconnect=true";
 
-        try (Connection connection = DriverManager.getConnection(url, dbInfoVo.getUsername(), dbInfoVo.getPassword())) {
-            DatabaseMetaData metaData = connection.getMetaData();
-            ResultSet columns = metaData.getColumns(dbName, null, tableName, null);
+        try (Connection connection = DriverManager.getConnection(url, dbInfoVo.getUsername(), dbInfoVo.getPassword());
+             ResultSet resultSet = connection.getMetaData().getPrimaryKeys(dbName, null, tableName);
+             ResultSet columns = connection.getMetaData().getColumns(dbName, null, tableName, null);) {
             TableVo tableVo = new TableVo(dbName, tableName);
+
+            List<ColumnVo> primaryColumns = new ArrayList<>();
+            while (resultSet.next()) {
+                String column = resultSet.getString("COLUMN_NAME");
+                primaryColumns.add(new ColumnVo(column, null, null));
+            }
+            tableVo.setPrimaryColumns(primaryColumns);
 
             List<ColumnType> columnTypes = new ArrayList<>();
             for (byte columnType : queryEventData.getColumnTypes()) {
