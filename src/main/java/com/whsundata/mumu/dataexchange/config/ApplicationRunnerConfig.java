@@ -7,7 +7,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 /**
- * @description: 应用启动后执行
+ * @description:  应用启动后执行
  * @author: liwei
  * @create: 2021/6/1 9:55
  **/

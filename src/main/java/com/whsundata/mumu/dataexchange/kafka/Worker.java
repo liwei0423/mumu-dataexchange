@@ -3,7 +3,7 @@ package com.whsundata.mumu.dataexchange.kafka;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 /**
- * @description:
+ * @description: 
  * @author: liwei
  * @date: 2021/7/29
  */

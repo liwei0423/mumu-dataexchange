@@ -10,7 +10,7 @@ import java.util.List;
 import static com.whsundata.mumu.dataexchange.binlogsql.tool.TableTool.setTableInfo;
 
 /**
- * @description:
+ * @description: 
  * @author: liwei
  * @date: 2021/7/29
  */

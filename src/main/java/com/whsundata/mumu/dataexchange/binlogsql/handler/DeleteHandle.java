@@ -13,7 +13,7 @@ import static com.whsundata.mumu.dataexchange.binlogsql.tool.SqlGenerateTool.*;
 import static com.whsundata.mumu.dataexchange.binlogsql.tool.TableTool.getTableInfo;
 
 /**
- * @description:
+ * @description: 
  * @author: liwei
  * @date: 2021/7/29
  */

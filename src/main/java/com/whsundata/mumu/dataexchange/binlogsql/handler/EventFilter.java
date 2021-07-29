@@ -5,7 +5,7 @@ import com.github.shyiko.mysql.binlog.event.Event;
 import java.util.function.Predicate;
 
 /**
- * @description:
+ * @description: 
  * @author: liwei
  * @date: 2021/7/29
  */
