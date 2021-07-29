@@ -4,13 +4,12 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @description: 
+ * @description: 解析消息封装类
  * @author: liwei
  * @date: 2021/7/29
  */
@@ -19,5 +18,5 @@ public class MessageVO implements Serializable {
 
     private Map<String, String> primarykeyMap = new HashMap<>();
 
-    private List<CanalEntry.Column> RowDataList = new ArrayList<>();
+    private Map<String, CanalEntry.Column> rowDataMap = new LinkedHashMap<>();
 }

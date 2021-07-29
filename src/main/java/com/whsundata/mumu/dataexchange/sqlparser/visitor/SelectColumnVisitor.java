@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @description: 
+ * @description: 解析sql查询结果集
  * @author: liwei
  * @date: 2021/7/29
  */

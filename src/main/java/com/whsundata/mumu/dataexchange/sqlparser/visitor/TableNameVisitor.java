@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @description: 
+ * @description: 获取sql全部表名
  * @author: liwei
  * @date: 2021/7/29
  */

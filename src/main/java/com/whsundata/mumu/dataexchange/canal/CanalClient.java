@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * @description: 
+ * @description:
  * @author: liwei
  * @date: 2021/7/29
  */
@@ -42,6 +42,9 @@ public class CanalClient {
         connector.ack(batchId);
     }
 
+    /**
+     * @description: 处理canal消息
+     */
     private static void handleMessage(Message message) {
         List<Entry> entries = message.getEntries();
         for (Entry entry : entries) {
@@ -68,9 +71,11 @@ public class CanalClient {
         }
     }
 
+    /**
+     * @description: 解析消息数据
+     */
     private static MessageVO parseMessage(Entry entry) {
         MessageVO messageVO = new MessageVO();
-        Map<String, String> primarykeyMap = new HashMap<>();
         CanalEntry.RowChange rowChage;
         try {
             rowChage = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
@@ -84,20 +89,23 @@ public class CanalClient {
             if (eventType == CanalEntry.EventType.DELETE) {
                 System.out.println("不支持 delete");
             } else {
-                messageVO.setRowDataList(rowData.getAfterColumnsList());
-                getPrimaryKey(primarykeyMap, rowData.getAfterColumnsList());
+                getMessageVO(messageVO, rowData.getAfterColumnsList());
             }
         }
-        messageVO.setPrimarykeyMap(primarykeyMap);
         return messageVO;
     }
 
-    private static void getPrimaryKey(Map<String, String> primarykeyMap, List<CanalEntry.Column> columnList) {
+    private static void getMessageVO(MessageVO messageVO, List<CanalEntry.Column> columnList) {
+        Map<String, String> primarykeyMap = new HashMap<>();
+        Map<String, CanalEntry.Column> rowDataMap = new LinkedHashMap<>();
         for (CanalEntry.Column item : columnList) {
+            rowDataMap.put(item.getName(), item);
             if (item.getIsKey()) {
                 primarykeyMap.put(item.getName(), item.getValue());
             }
         }
+        messageVO.setPrimarykeyMap(primarykeyMap);
+        messageVO.setRowDataMap(rowDataMap);
     }
 
     private static void printEntry(Entry entry) {
