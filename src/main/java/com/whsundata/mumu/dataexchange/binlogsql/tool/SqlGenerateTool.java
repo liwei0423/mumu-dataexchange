@@ -21,7 +21,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class SqlGenerateTool {
     public static final ZoneId UTC = ZoneId.of("UTC");
     public static DateTimeFormatter dateTimeFormater = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

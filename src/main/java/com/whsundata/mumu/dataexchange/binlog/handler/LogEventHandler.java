@@ -12,6 +12,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 @Component("eventListener")
 public class LogEventHandler implements EventListener {
 

@@ -10,6 +10,11 @@ import java.io.StringWriter;
 import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class DatasetSql {
 
     public static void main(String[] args) throws SQLSyntaxErrorException {

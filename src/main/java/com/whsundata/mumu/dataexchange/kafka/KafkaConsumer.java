@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 @Component
 public class KafkaConsumer {
 

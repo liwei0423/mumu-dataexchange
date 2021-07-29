@@ -7,6 +7,11 @@ import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class TableNameVisitor extends MySqlOutputVisitor {
 
     private Map<String, String> tableMap = new HashMap<>();

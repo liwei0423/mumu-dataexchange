@@ -12,7 +12,11 @@ import java.util.List;
 import static com.whsundata.mumu.dataexchange.binlogsql.tool.SqlGenerateTool.*;
 import static com.whsundata.mumu.dataexchange.binlogsql.tool.TableTool.getTableInfo;
 
-
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class InsertHandle implements BinlogEventHandle {
 
     private final Filter filter;

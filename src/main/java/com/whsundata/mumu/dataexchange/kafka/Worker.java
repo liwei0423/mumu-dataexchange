@@ -2,6 +2,11 @@ package com.whsundata.mumu.dataexchange.kafka;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class Worker implements Runnable {
 
     private ConsumerRecord<String, String> consumerRecord;

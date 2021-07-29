@@ -10,6 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class SelectColumnVisitor extends MySqlOutputVisitor {
 
     private Map<String, String> columnMap = new HashMap<>();

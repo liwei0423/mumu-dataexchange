@@ -9,7 +9,11 @@ import java.util.List;
 
 import static com.whsundata.mumu.dataexchange.binlogsql.tool.TableTool.setTableInfo;
 
-
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class TableMapHandle implements BinlogEventHandle {
     private DbInfoVo dbInfoVo;
 

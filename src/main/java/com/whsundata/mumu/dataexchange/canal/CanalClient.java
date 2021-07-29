@@ -14,6 +14,11 @@ import java.net.InetSocketAddress;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class CanalClient {
 
     public static void execute() {

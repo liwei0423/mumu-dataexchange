@@ -16,6 +16,11 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 @Component("kafkaExecutor")
 public class KafkaExecutor {
 

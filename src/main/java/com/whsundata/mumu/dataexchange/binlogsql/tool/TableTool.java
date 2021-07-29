@@ -15,7 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 public class TableTool {
 
     public static Map<Long, TableVo> tableInfoMap = new HashMap<>();

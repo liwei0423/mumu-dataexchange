@@ -9,6 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @description:
+ * @author: liwei
+ * @date: 2021/7/29
+ */
 @Data
 public class MessageVO implements Serializable {
 
