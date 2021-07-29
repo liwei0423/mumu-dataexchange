@@ -8,6 +8,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
 import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
 import com.alibaba.otter.canal.protocol.Message;
+import com.whsundata.mumu.dataexchange.vo.MessageVO;
 
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -43,6 +44,7 @@ public class CanalClient {
                 continue;
             }
 //            printEntry(entry);
+            MessageVO messageVO = parseMessage(entry);
             String sql = "SELECT * FROM user t1 inner join user_info t2 on t1.user_no = t2.user_no where t2.user_no = '11'";
             Map<String, Object> parms = new HashMap<>();
             try {
@@ -57,6 +59,38 @@ public class CanalClient {
                 }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
+            }
+        }
+    }
+
+    private static MessageVO parseMessage(Entry entry) {
+        MessageVO messageVO = new MessageVO();
+        Map<String, String> primarykeyMap = new HashMap<>();
+        CanalEntry.RowChange rowChage;
+        try {
+            rowChage = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
+        } catch (Exception e) {
+            throw new RuntimeException("ERROR ## parser of eromanga-event has an error , data:" + entry.toString(),
+                    e);
+        }
+        CanalEntry.EventType eventType = rowChage.getEventType();
+
+        for (CanalEntry.RowData rowData : rowChage.getRowDatasList()) {
+            if (eventType == CanalEntry.EventType.DELETE) {
+                System.out.println("不支持 delete");
+            } else {
+                messageVO.setRowDataList(rowData.getAfterColumnsList());
+                getPrimaryKey(primarykeyMap, rowData.getAfterColumnsList());
+            }
+        }
+        messageVO.setPrimarykeyMap(primarykeyMap);
+        return messageVO;
+    }
+
+    private static void getPrimaryKey(Map<String, String> primarykeyMap, List<CanalEntry.Column> columnList) {
+        for (CanalEntry.Column item : columnList) {
+            if (item.getIsKey()) {
+                primarykeyMap.put(item.getName(), item.getValue());
             }
         }
     }
@@ -82,9 +116,6 @@ public class CanalClient {
             } else if (eventType == CanalEntry.EventType.INSERT) {
                 printColumn(rowData.getAfterColumnsList());
             } else {
-                System.out.println("-------&gt; before");
-                printColumn(rowData.getBeforeColumnsList());
-                System.out.println("-------&gt; after");
                 printColumn(rowData.getAfterColumnsList());
             }
         }
