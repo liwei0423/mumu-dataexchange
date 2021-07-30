@@ -10,11 +10,11 @@ import java.util.Map;
  * @description: sql重组增加查询条件
  * @author: liwei
  */
-public class AddQueryConditionVisitor extends MySqlOutputVisitor {
+public class AddConditionVisitor extends MySqlOutputVisitor {
 
     Map<String, Object> condition;
 
-    public AddQueryConditionVisitor(Appendable appender, Map<String, Object> condition) {
+    public AddConditionVisitor(Appendable appender, Map<String, Object> condition) {
         super(appender);
         this.condition = condition;
     }

@@ -2,20 +2,25 @@ package com.whsundata.mumu.dataexchange.canal;
 
 import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
+import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
 import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
 import com.alibaba.otter.canal.protocol.Message;
+import com.whsundata.mumu.dataexchange.dataset.DatasetSql;
+import com.whsundata.mumu.dataexchange.sqlparser.SqlParser;
 import com.whsundata.mumu.dataexchange.vo.MessageVO;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.*;
 
 /**
- * @description:
+ * @description: canal客户端
  * @author: liwei
  * @date: 2021/7/29
  */
@@ -35,9 +40,14 @@ public class CanalClient {
         long batchId = message.getId();
         int size = message.getEntries().size();
         if (batchId == -1 || size == 0) {
-
         } else {
-            handleMessage(message);
+            try {
+                handleMessage(message);
+            } catch (SQLSyntaxErrorException throwables) {
+                throwables.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         connector.ack(batchId);
     }
@@ -45,7 +55,7 @@ public class CanalClient {
     /**
      * @description: 处理canal消息
      */
-    private static void handleMessage(Message message) {
+    private static void handleMessage(Message message) throws SQLSyntaxErrorException, IOException {
         List<Entry> entries = message.getEntries();
         for (Entry entry : entries) {
             if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
@@ -53,7 +63,12 @@ public class CanalClient {
             }
 //            printEntry(entry);
             MessageVO messageVO = parseMessage(entry);
-            String sql = "SELECT * FROM user t1 inner join user_info t2 on t1.user_no = t2.user_no where t2.user_no = '11'";
+            String sql = DatasetSql.getSql();
+            SQLSelectStatement statement = SqlParser.getStatement(sql);
+            Map<String, String> tableNameMap = SqlParser.getTableNameMap(statement);
+            Map<String, String> selectColumnMap = SqlParser.getSelectColumnMap(statement);
+            String newSql = SqlParser.addConditionCanalColumn(statement,messageVO.getRowDataMap());
+
             Map<String, Object> parms = new HashMap<>();
             try {
                 List<Entity> list = Db.use().query(sql, parms);

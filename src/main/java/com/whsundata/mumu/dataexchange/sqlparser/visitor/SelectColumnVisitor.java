@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class SelectColumnVisitor extends MySqlOutputVisitor {
 
-    private Map<String, String> columnMap = new HashMap<>();
+    public Map<String, String> selectColumnMap = new HashMap<>();
 
     public SelectColumnVisitor(Appendable appender) {
         super(appender);
@@ -28,7 +28,7 @@ public class SelectColumnVisitor extends MySqlOutputVisitor {
         List<SQLSelectItem> list = x.getSelectList();
         for (SQLSelectItem item : list) {
             SQLPropertyExpr sqlPropertyExpr = (SQLPropertyExpr) item.getExpr();
-            columnMap.put(sqlPropertyExpr.getOwnerName(), sqlPropertyExpr.getSimpleName());
+            selectColumnMap.put(sqlPropertyExpr.getOwnerName(), sqlPropertyExpr.getSimpleName());
         }
         return true;
     }

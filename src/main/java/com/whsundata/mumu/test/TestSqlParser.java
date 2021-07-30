@@ -3,7 +3,7 @@ package com.whsundata.mumu.test;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
-import com.whsundata.mumu.dataexchange.sqlparser.visitor.AddQueryConditionVisitor;
+import com.whsundata.mumu.dataexchange.sqlparser.visitor.AddConditionVisitor;
 import com.whsundata.mumu.dataexchange.sqlparser.visitor.SelectColumnVisitor;
 import com.whsundata.mumu.dataexchange.sqlparser.visitor.TableNameVisitor;
 
@@ -32,8 +32,8 @@ public class TestSqlParser {
         Map<String, Object> condition = new LinkedHashMap<>();
         condition.put("aa", "1");
         condition.put("bb", 2);
-        AddQueryConditionVisitor addQueryConditionVisitor = new AddQueryConditionVisitor(out, condition);
-        addQueryConditionVisitor.visit(statement);
+        AddConditionVisitor addConditionVisitor = new AddConditionVisitor(out, condition);
+        addConditionVisitor.visit(statement);
         System.out.println(statement.toString());
     }
 

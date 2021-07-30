@@ -16,7 +16,13 @@ import java.util.Map;
 @Data
 public class MessageVO implements Serializable {
 
+    /**
+     * @description: 主键信息
+     */
     private Map<String, String> primarykeyMap = new HashMap<>();
-
+    /**
+     * @description: 行数据信息
+     */
     private Map<String, CanalEntry.Column> rowDataMap = new LinkedHashMap<>();
+
 }

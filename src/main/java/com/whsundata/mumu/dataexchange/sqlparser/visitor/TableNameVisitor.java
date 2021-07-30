@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class TableNameVisitor extends MySqlOutputVisitor {
 
-    private Map<String, String> tableMap = new HashMap<>();
+    public Map<String, String> tableNameMap = new HashMap<>();
 
     public TableNameVisitor(Appendable appender) {
         super(appender);
@@ -25,7 +25,7 @@ public class TableNameVisitor extends MySqlOutputVisitor {
         SQLName sqlName = (SQLName) x.getExpr();
         String alias = x.getAlias();
         String tableName = sqlName.getSimpleName();
-        tableMap.put(alias, tableName);
+        tableNameMap.put(alias, tableName);
         return true;
     }
 
