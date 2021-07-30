@@ -1,7 +1,5 @@
 package com.whsundata.mumu.dataexchange.canal;
 
-import cn.hutool.db.Db;
-import cn.hutool.db.Entity;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
@@ -15,9 +13,11 @@ import com.whsundata.mumu.dataexchange.vo.MessageVO;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @description: canal客户端
@@ -61,28 +61,28 @@ public class CanalClient {
             if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
                 continue;
             }
-//            printEntry(entry);
+            printEntry(entry);
             MessageVO messageVO = parseMessage(entry);
             String sql = DatasetSql.getSql();
             SQLSelectStatement statement = SqlParser.getStatement(sql);
             Map<String, String> tableNameMap = SqlParser.getTableNameMap(statement);
             Map<String, String> selectColumnMap = SqlParser.getSelectColumnMap(statement);
-            String newSql = SqlParser.addConditionCanalColumn(statement,messageVO.getRowDataMap());
-
-            Map<String, Object> parms = new HashMap<>();
-            try {
-                List<Entity> list = Db.use().query(sql, parms);
-                for (Entity entity : list) {
-                    Set<String> set = entity.getFieldNames();
-                    Iterator<String> iterator = set.iterator();
-                    while (iterator.hasNext()) {
-                        String filedName = iterator.next();
-                        System.out.println(filedName + " --> " + entity.getStr(filedName));
-                    }
-                }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            String newSql = SqlParser.addCondition(statement, messageVO);
+            System.out.println("------newsql=" + newSql);
+//            Map<String, Object> parms = new HashMap<>();
+//            try {
+//                List<Entity> list = Db.use().query(sql, parms);
+//                for (Entity entity : list) {
+//                    Set<String> set = entity.getFieldNames();
+//                    Iterator<String> iterator = set.iterator();
+//                    while (iterator.hasNext()) {
+//                        String filedName = iterator.next();
+//                        System.out.println(filedName + " --> " + entity.getStr(filedName));
+//                    }
+//                }
+//            } catch (SQLException throwables) {
+//                throwables.printStackTrace();
+//            }
         }
     }
 
@@ -98,8 +98,9 @@ public class CanalClient {
             throw new RuntimeException("ERROR ## parser of eromanga-event has an error , data:" + entry.toString(),
                     e);
         }
+        String tableName = entry.getHeader().getTableName();
+        messageVO.setTableName(tableName);
         CanalEntry.EventType eventType = rowChage.getEventType();
-
         for (CanalEntry.RowData rowData : rowChage.getRowDatasList()) {
             if (eventType == CanalEntry.EventType.DELETE) {
                 System.out.println("不支持 delete");

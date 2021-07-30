@@ -17,6 +17,10 @@ import java.util.Map;
 public class MessageVO implements Serializable {
 
     /**
+     * @description: 表名
+     */
+    private String tableName;
+    /**
      * @description: 主键信息
      */
     private Map<String, String> primarykeyMap = new HashMap<>();

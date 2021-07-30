@@ -1,7 +1,10 @@
 package com.whsundata.mumu.test;
 
 import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLIntegerExpr;
+import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.whsundata.mumu.dataexchange.sqlparser.visitor.AddConditionVisitor;
 import com.whsundata.mumu.dataexchange.sqlparser.visitor.SelectColumnVisitor;
@@ -35,6 +38,8 @@ public class TestSqlParser {
         AddConditionVisitor addConditionVisitor = new AddConditionVisitor(out, condition);
         addConditionVisitor.visit(statement);
         System.out.println(statement.toString());
+
+        SQLSelectQueryBlock sqlSelectQueryBlock = statement.getSelect().getQueryBlock();
     }
 
     public static SQLStatement parser(String sql, String dbType) throws SQLSyntaxErrorException {
