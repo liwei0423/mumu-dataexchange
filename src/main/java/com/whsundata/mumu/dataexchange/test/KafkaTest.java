@@ -1,7 +1,6 @@
-package com.whsundata.mumu.test;
+package com.whsundata.mumu.dataexchange.test;
 
 import com.whsundata.mumu.dataexchange.DataApplication;
-import com.whsundata.mumu.dataexchange.kafka.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.Test;
@@ -10,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.ContainerProperties;
-import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Properties;

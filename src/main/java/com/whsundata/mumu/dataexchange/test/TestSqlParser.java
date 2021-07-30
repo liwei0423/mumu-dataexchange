@@ -1,9 +1,7 @@
-package com.whsundata.mumu.test;
+package com.whsundata.mumu.dataexchange.test;
 
 import com.alibaba.druid.sql.SQLUtils;
-import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.expr.SQLIntegerExpr;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.whsundata.mumu.dataexchange.sqlparser.visitor.AddConditionVisitor;

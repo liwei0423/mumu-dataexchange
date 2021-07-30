@@ -1,4 +1,4 @@
-package com.whsundata.mumu.test;
+package com.whsundata.mumu.dataexchange.test;
 
 import cn.hutool.db.Db;
 import org.junit.Test;

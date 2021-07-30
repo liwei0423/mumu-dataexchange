@@ -1,5 +1,6 @@
 package com.whsundata.mumu.dataexchange.canal;
 
+import cn.hutool.json.JSONObject;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
@@ -7,13 +8,15 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
 import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
 import com.alibaba.otter.canal.protocol.Message;
-import com.whsundata.mumu.dataexchange.dataset.DatasetSql;
+import com.whsundata.mumu.dataexchange.dataset.sink.SinkMessage;
+import com.whsundata.mumu.dataexchange.dataset.source.DatasetSql;
+import com.whsundata.mumu.dataexchange.db.DbTool;
 import com.whsundata.mumu.dataexchange.sqlparser.SqlParser;
 import com.whsundata.mumu.dataexchange.vo.MessageVO;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.sql.SQLSyntaxErrorException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,8 +46,8 @@ public class CanalClient {
         } else {
             try {
                 handleMessage(message);
-            } catch (SQLSyntaxErrorException throwables) {
-                throwables.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -55,7 +58,7 @@ public class CanalClient {
     /**
      * @description: 处理canal消息
      */
-    private static void handleMessage(Message message) throws SQLSyntaxErrorException, IOException {
+    private static void handleMessage(Message message) throws SQLException, IOException {
         List<Entry> entries = message.getEntries();
         for (Entry entry : entries) {
             if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
@@ -68,21 +71,11 @@ public class CanalClient {
             Map<String, String> tableNameMap = SqlParser.getTableNameMap(statement);
             Map<String, String> selectColumnMap = SqlParser.getSelectColumnMap(statement);
             String newSql = SqlParser.addCondition(statement, messageVO);
-            System.out.println("------newsql=" + newSql);
-//            Map<String, Object> parms = new HashMap<>();
-//            try {
-//                List<Entity> list = Db.use().query(sql, parms);
-//                for (Entity entity : list) {
-//                    Set<String> set = entity.getFieldNames();
-//                    Iterator<String> iterator = set.iterator();
-//                    while (iterator.hasNext()) {
-//                        String filedName = iterator.next();
-//                        System.out.println(filedName + " --> " + entity.getStr(filedName));
-//                    }
-//                }
-//            } catch (SQLException throwables) {
-//                throwables.printStackTrace();
-//            }
+            System.out.println("################newsql:\r\n" + newSql);
+            List<Map<String, String>> resultList = DbTool.query(newSql);
+            SinkMessage sinkMessage = new SinkMessage("user2", resultList);
+            JSONObject jsonObject = new JSONObject(sinkMessage);
+            System.out.println("jsonstr=" + jsonObject.toString());
         }
     }
 

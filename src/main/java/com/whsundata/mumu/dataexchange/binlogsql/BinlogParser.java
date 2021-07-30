@@ -3,7 +3,7 @@ package com.whsundata.mumu.dataexchange.binlogsql;
 import com.github.shyiko.mysql.binlog.event.Event;
 import com.github.shyiko.mysql.binlog.event.EventType;
 import com.whsundata.mumu.dataexchange.binlogsql.handler.BinlogEventHandle;
-import com.whsundata.mumu.test.KafkaTest;
+import com.whsundata.mumu.dataexchange.test.KafkaTest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
