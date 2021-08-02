@@ -10,7 +10,7 @@ import java.sql.SQLSyntaxErrorException;
 public class DatasetSql {
 
     public static String getSql() throws SQLSyntaxErrorException {
-        String sql = "SELECT t1.user_no,t1.user_name,t2.phone,t2.address FROM user t1 inner join user_info t2 on t1.user_id = t2.user_id";
+        String sql = "SELECT t1.user_id,t1.user_no,t1.user_name,t2.phone,t2.address FROM user t1 inner join user_info t2 on t1.user_id = t2.user_id";
         return sql;
     }
 

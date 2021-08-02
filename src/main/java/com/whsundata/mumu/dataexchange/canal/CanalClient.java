@@ -16,21 +16,20 @@ import com.whsundata.mumu.dataexchange.db.DbTool;
 import com.whsundata.mumu.dataexchange.sqlparser.SqlParser;
 import com.whsundata.mumu.dataexchange.test.KafkaProducer;
 import com.whsundata.mumu.dataexchange.vo.MessageVO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @description: canal客户端
  * @author: liwei
  * @date: 2021/7/29
  */
+@Slf4j
 public class CanalClient {
 
     public static void execute() {
@@ -68,6 +67,10 @@ public class CanalClient {
         List<Entry> entries = message.getEntries();
         for (Entry entry : entries) {
             if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
+                continue;
+            }
+            if ("user2".equals(entry.getHeader().getTableName())) {
+                log.info("skip table：" + entry.getHeader().getTableName());
                 continue;
             }
             printEntry(entry);
@@ -139,7 +142,7 @@ public class CanalClient {
      * @description: 组装sinkMessage
      */
     private static SinkMessage putSinkMessage(MessageVO messageVO, List<Map<String, String>> resultList) {
-        SinkMessage sinkMessage = new SinkMessage("user2", resultList);
+        SinkMessage sinkMessage = new SinkMessage("user2", resultList, messageVO.getPrimarykeyMap());
         boolean record = CollectionUtil.isNotEmpty(resultList);
         int eventType = messageVO.getEventType();
         if (CanalEntry.EventType.INSERT.getNumber() == eventType) {
@@ -153,6 +156,13 @@ public class CanalClient {
         } else if (CanalEntry.EventType.DELETE.getNumber() == eventType) {
             if (!record) {
                 sinkMessage.setSinkType(SinkTypeEnum.DELETE.getCode());
+                List<Map<String, String>> oldList = new ArrayList<>();
+                Map<String, String> map = new LinkedHashMap<>();
+                for (String key : messageVO.getRowDataMap().keySet()) {
+                    map.put(key, messageVO.getRowDataMap().get(key).getValue());
+                }
+                oldList.add(map);
+                sinkMessage.setDataList(oldList);
             }
         }
         return sinkMessage;

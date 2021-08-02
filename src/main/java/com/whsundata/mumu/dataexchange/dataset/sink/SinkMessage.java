@@ -17,9 +17,11 @@ public class SinkMessage {
     private String tableName;
     private List<Map<String, String>> dataList;
     private String sinkType;
+    private Map<String, String> primaryKey;
 
-    public SinkMessage(String tableName, List<Map<String, String>> dataList) {
+    public SinkMessage(String tableName, List<Map<String, String>> dataList, Map<String, String> primaryKey) {
         this.tableName = tableName;
         this.dataList = dataList;
+        this.primaryKey = primaryKey;
     }
 }
