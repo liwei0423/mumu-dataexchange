@@ -3,7 +3,7 @@ package com.whsundata.mumu.dataexchange.binlogsql;
 import com.github.shyiko.mysql.binlog.event.Event;
 import com.github.shyiko.mysql.binlog.event.EventType;
 import com.whsundata.mumu.dataexchange.binlogsql.handler.BinlogEventHandle;
-import com.whsundata.mumu.dataexchange.test.KafkaTest;
+import com.whsundata.mumu.dataexchange.test.KafkaProducer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,7 @@ public class BinlogParser {
             if (!sql.isEmpty()) {
                 log.info("handle sql: " + sql);
                 String topic = "dev-test-user";
-                KafkaTest.send(topic, "user", sql.get(0));
+                KafkaProducer.send(topic, "user", sql.get(0));
             }
         }
     }

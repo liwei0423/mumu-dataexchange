@@ -128,9 +128,9 @@ public class KafkaExecutor {
 
     public static void main(String[] args) {
         KafkaExecutor kafkaExecutor = new KafkaExecutor();
-        String topic = "dev-test-user";
-//        kafkaExecutor.createTopic(topic);
+        String topic = "dev-test-user2";
+        kafkaExecutor.createTopic(topic);
 //        kafkaExecutor.sendMessage(topic, "abc123");
-        kafkaExecutor.listen("0", topic);
+//        kafkaExecutor.listen("0", topic);
     }
 }

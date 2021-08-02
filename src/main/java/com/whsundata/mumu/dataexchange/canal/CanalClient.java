@@ -1,5 +1,6 @@
 package com.whsundata.mumu.dataexchange.canal;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONObject;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.otter.canal.client.CanalConnector;
@@ -9,10 +10,13 @@ import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
 import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
 import com.alibaba.otter.canal.protocol.Message;
 import com.whsundata.mumu.dataexchange.dataset.sink.SinkMessage;
+import com.whsundata.mumu.dataexchange.dataset.sink.SinkTypeEnum;
 import com.whsundata.mumu.dataexchange.dataset.source.DatasetSql;
 import com.whsundata.mumu.dataexchange.db.DbTool;
 import com.whsundata.mumu.dataexchange.sqlparser.SqlParser;
+import com.whsundata.mumu.dataexchange.test.KafkaProducer;
 import com.whsundata.mumu.dataexchange.vo.MessageVO;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -45,20 +49,22 @@ public class CanalClient {
         if (batchId == -1 || size == 0) {
         } else {
             try {
-                handleMessage(message);
+                boolean isSuccess = handleMessage(message);
+                if (isSuccess) {
+                    connector.ack(batchId);
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        connector.ack(batchId);
     }
 
     /**
      * @description: 处理canal消息
      */
-    private static void handleMessage(Message message) throws SQLException, IOException {
+    private static boolean handleMessage(Message message) throws SQLException, IOException {
         List<Entry> entries = message.getEntries();
         for (Entry entry : entries) {
             if (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND) {
@@ -66,17 +72,24 @@ public class CanalClient {
             }
             printEntry(entry);
             MessageVO messageVO = parseMessage(entry);
-            String sql = DatasetSql.getSql();
-            SQLSelectStatement statement = SqlParser.getStatement(sql);
-            Map<String, String> tableNameMap = SqlParser.getTableNameMap(statement);
-            Map<String, String> selectColumnMap = SqlParser.getSelectColumnMap(statement);
-            String newSql = SqlParser.addCondition(statement, messageVO);
-            System.out.println("################newsql:\r\n" + newSql);
-            List<Map<String, String>> resultList = DbTool.query(newSql);
-            SinkMessage sinkMessage = new SinkMessage("user2", resultList);
-            JSONObject jsonObject = new JSONObject(sinkMessage);
-            System.out.println("jsonstr=" + jsonObject.toString());
+            if (CollectionUtil.isNotEmpty(messageVO.getRowDataMap())) {
+                String sql = DatasetSql.getSql();
+                SQLSelectStatement statement = SqlParser.getStatement(sql);
+                Map<String, String> tableNameMap = SqlParser.getTableNameMap(statement);
+                Map<String, String> selectColumnMap = SqlParser.getSelectColumnMap(statement);
+                String newSql = SqlParser.addCondition(statement, messageVO);
+                System.out.println("################newsql:\r\n" + newSql);
+                List<Map<String, String>> resultList = DbTool.query(newSql);
+                SinkMessage sinkMessage = putSinkMessage(messageVO, resultList);
+                if (StringUtils.isNotEmpty(sinkMessage.getSinkType())) {
+                    JSONObject jsonObject = new JSONObject(sinkMessage);
+                    String topic = "dev-test-user2";
+                    KafkaProducer.send(topic, "user2", jsonObject.toString());
+                    System.out.println("jsonstr=" + jsonObject);
+                }
+            }
         }
+        return true;
     }
 
     /**
@@ -94,11 +107,16 @@ public class CanalClient {
         String tableName = entry.getHeader().getTableName();
         messageVO.setTableName(tableName);
         CanalEntry.EventType eventType = rowChage.getEventType();
+        messageVO.setEventType(eventType.getNumber());
         for (CanalEntry.RowData rowData : rowChage.getRowDatasList()) {
-            if (eventType == CanalEntry.EventType.DELETE) {
-                System.out.println("不支持 delete");
-            } else {
+            if (eventType == CanalEntry.EventType.INSERT) {
                 getMessageVO(messageVO, rowData.getAfterColumnsList());
+            } else if (eventType == CanalEntry.EventType.UPDATE) {
+                getMessageVO(messageVO, rowData.getAfterColumnsList());
+            } else if (eventType == CanalEntry.EventType.DELETE) {
+                getMessageVO(messageVO, rowData.getBeforeColumnsList());
+            } else {
+                System.out.println("skip data change type ：" + eventType);
             }
         }
         return messageVO;
@@ -115,6 +133,29 @@ public class CanalClient {
         }
         messageVO.setPrimarykeyMap(primarykeyMap);
         messageVO.setRowDataMap(rowDataMap);
+    }
+
+    /**
+     * @description: 组装sinkMessage
+     */
+    private static SinkMessage putSinkMessage(MessageVO messageVO, List<Map<String, String>> resultList) {
+        SinkMessage sinkMessage = new SinkMessage("user2", resultList);
+        boolean record = CollectionUtil.isNotEmpty(resultList);
+        int eventType = messageVO.getEventType();
+        if (CanalEntry.EventType.INSERT.getNumber() == eventType) {
+            if (record) {
+                sinkMessage.setSinkType(SinkTypeEnum.CREATE.getCode());
+            }
+        } else if (CanalEntry.EventType.UPDATE.getNumber() == eventType) {
+            if (record) {
+                sinkMessage.setSinkType(SinkTypeEnum.UPDATE.getCode());
+            }
+        } else if (CanalEntry.EventType.DELETE.getNumber() == eventType) {
+            if (!record) {
+                sinkMessage.setSinkType(SinkTypeEnum.DELETE.getCode());
+            }
+        }
+        return sinkMessage;
     }
 
     private static void printEntry(Entry entry) {

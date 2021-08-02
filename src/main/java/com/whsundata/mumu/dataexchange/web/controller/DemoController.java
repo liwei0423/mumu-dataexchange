@@ -23,4 +23,12 @@ public class DemoController {
         }
         return "test success";
     }
+
+    @RequestMapping(value = "receive2")
+    public String receive2(String data) {
+        System.out.println("--- receive --");
+        System.out.println("data=" + data);
+        System.out.println("----");
+        return "test success";
+    }
 }

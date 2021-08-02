@@ -13,8 +13,10 @@ import java.util.Map;
 @Data
 public class SinkMessage {
 
+    private String database;
     private String tableName;
     private List<Map<String, String>> dataList;
+    private String sinkType;
 
     public SinkMessage(String tableName, List<Map<String, String>> dataList) {
         this.tableName = tableName;

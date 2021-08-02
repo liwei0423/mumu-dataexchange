@@ -18,14 +18,14 @@ import java.util.Map;
 @Component
 public class KafkaConsumer {
 
-    @KafkaListener(topics = "dev-test-user")
+    @KafkaListener(topics = "dev-test-user2")
     public void onMessage(ConsumerRecord<String, String> data) {
         String value = data.value();
         System.out.println("consumer value=" + value);
         try {
             Map<String, Object> params = new HashMap<>();
-            params.put("sql", value);
-            String result = HttpClientUtil.httpPostRequest("http://localhost:8080/demo/receive/", params);
+            params.put("data", value);
+            String result = HttpClientUtil.httpPostRequest("http://localhost:8080/demo/receive2/", params);
         } catch (Exception e) {
             e.printStackTrace();
         }

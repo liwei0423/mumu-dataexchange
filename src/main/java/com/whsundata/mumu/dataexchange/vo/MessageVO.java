@@ -29,4 +29,9 @@ public class MessageVO implements Serializable {
      */
     private Map<String, CanalEntry.Column> rowDataMap = new LinkedHashMap<>();
 
+    /**
+     * @description: CanalEntry.EventType
+     */
+    private int eventType;
+
 }
